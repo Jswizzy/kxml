@@ -1,5 +1,6 @@
 package com.arrowmaker.lib
 
+import java.io.StringWriter
 import javax.xml.stream.XMLStreamWriter
 
 fun XMLStreamWriter.document(init: XMLStreamWriter.() -> Unit): XMLStreamWriter {
@@ -25,3 +26,5 @@ fun XMLStreamWriter.element(name: String, content: String) {
 }
 
 fun XMLStreamWriter.attribute(name: String, value: String) = writeAttribute(name, value)
+
+fun StringWriter.xml() = this.buffer.toString()

@@ -2,22 +2,12 @@ package com.arrowmaker.lib
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import java.io.StringWriter
 import java.util.*
-import javax.xml.stream.XMLOutputFactory.newInstance
 
 class XmlTest {
 
     @Test
     fun `Valid XML`() {
-
-        Xml.create().document {  }
-
-
-        val stringWriter = StringWriter()
-        val xmlOutputFactory = newInstance()
-        val writer = xmlOutputFactory.createXMLStreamWriter(stringWriter)
-
 
         val USD: Currency = Currency.getInstance("USD")
         val EUR: Currency = Currency.getInstance("EUR")
@@ -32,32 +22,34 @@ class XmlTest {
                                 Account("JP Morgan Chase & Co", "000-777-222-333", USD),
                                 Account("Goldman Sachs", "000-777-222-444", EUR))))
 
-        val document = writer.document {
-            element("persons") {
-                attribute("version", "1.1")
-                persons.forEach { (name, accounts) ->
-                    element("person") {
-                        element("name") {
-                            element("first", name.first)
-                            element("last", name.last)
-                        }
-                        element("accounts") {
-                            accounts.forEach { (bank, number, currency) ->
-                                element("account") {
-                                    element("bank", bank)
-                                    element("number", number)
-                                    element("currency", currency.currencyCode)
+        val document =
+
+                XmlStringPrinter.document {
+
+                    element("persons") {
+                        attribute("version", "1.1")
+                        persons.forEach { (name, accounts) ->
+                            element("person") {
+                                element("name") {
+                                    element("first", name.first)
+                                    element("last", name.last)
+                                }
+                                element("accounts") {
+                                    accounts.forEach { (bank, number, currency) ->
+                                        element("account") {
+                                            element("bank", bank)
+                                            element("number", number)
+                                            element("currency", currency.currencyCode)
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
-        }
 
-        val string = stringWriter.buffer.toString()
-        stringWriter.close()
-
+        val string = document.xml()
+        
         assertEquals(xml, string)
     }
 }
